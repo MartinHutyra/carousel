@@ -3,7 +3,7 @@ import { loadImages } from "./Test";
 
 const Carousel = ({ initialTime }) => {
   const [images, setImages] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [time, setTime] = useState(
     new Date().toLocaleTimeString([], {
       hour: "2-digit",
@@ -11,7 +11,7 @@ const Carousel = ({ initialTime }) => {
       second: "2-digit",
     })
   );
-  console.log(images);
+
   useEffect(() => {
     const fetchAndSetImages = async () => {
       try {
@@ -28,7 +28,7 @@ const Carousel = ({ initialTime }) => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      // setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % 2);
       setTime(
         new Date().toLocaleTimeString([], {
           hour: "2-digit",
@@ -37,7 +37,6 @@ const Carousel = ({ initialTime }) => {
         })
       );
     }, 5000);
-    // console.log(images.length);
 
     return () => clearInterval(intervalId);
   }, [images]);
@@ -54,8 +53,8 @@ const Carousel = ({ initialTime }) => {
 
   const handleReloadClick = () => {
     setImages([]);
-    loadImages(new Date().toLocaleTimeString()).then((fetchedImages) =>
-      setImages(fetchedImages)
+    loadImages(initialTime).then((fetchedImages) =>
+      setImages(fetchedImages.data.images)
     );
   };
 
@@ -67,7 +66,7 @@ const Carousel = ({ initialTime }) => {
     <div>
       <img src={images[currentIndex]?.url} alt="" />
       <p>{time}</p>
-      {/* <p>{images[currentIndex]?.title}</p> */}
+      <p>{images[currentIndex]?.title}</p>
       <div>
         <button onClick={handlePrevClick}>Previous</button>
         <button onClick={handleNextClick}>Next</button>
