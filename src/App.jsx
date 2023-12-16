@@ -29,7 +29,7 @@ function App() {
     }
   }, [time]);
 
-  const handleReset = useCallback(async () => {
+  const handleReset = useCallback(() => {
     setLoading(true);
     setTime(getTime());
   }, []);
