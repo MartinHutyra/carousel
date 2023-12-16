@@ -1,81 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { loadImages } from "./Test";
+import { useEffect, useState } from 'react';
 
-const Carousel = ({ initialTime }) => {
-  const [images, setImages] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [time, setTime] = useState(
-    new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    })
-  );
+const Carousel = ({ onReset, images, time }) => {
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    const fetchAndSetImages = async () => {
-      try {
-        const fetchedImages = await loadImages(initialTime);
-        setImages(fetchedImages.data.images);
-        console.log();
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      }
-    };
-
-    fetchAndSetImages();
-  }, [initialTime]);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % 2);
-      setTime(
-        new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-      );
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % 2);
     }, 5000);
 
-    return () => clearInterval(intervalId);
-  }, [images]);
+    return () => clearInterval(interval);
+  }, []);
 
   const handlePrevClick = () => {
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + images.length) % images.length
-    );
+    setIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
   const handleNextClick = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    setIndex((prev) => (prev + 1) % images.length);
   };
-
-  const handleReloadClick = () => {
-    setImages([]);
-    loadImages(initialTime).then((fetchedImages) =>
-      setImages(fetchedImages.data.images)
-    );
-  };
-
-  if (images.length === 0) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
-      <img src={images[currentIndex]?.url} alt="" />
       <p>{time}</p>
-      <p>{images[currentIndex]?.title}</p>
+      <img src={images[index]?.url} alt="" />
+      <p>{images[index]?.title}</p>
       <div>
         <button onClick={handlePrevClick}>Previous</button>
         <button onClick={handleNextClick}>Next</button>
       </div>
       <div>
-        <button onClick={handleReloadClick}>Reload</button>
+        <button onClick={onReset}>Reload</button>
       </div>
     </div>
   );
 };
 
-export default Carousel;
+export { Carousel };
